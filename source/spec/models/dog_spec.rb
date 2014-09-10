@@ -23,26 +23,28 @@ describe "Dog" do
                     :owner_id => teagan.id } )
     end
 
-    describe "#owner" do
-      it "returns the dog's owner" do
-        dog = Dog.first
-        expected_owner = Person.find(dog.owner_id)
+    describe "belongs to owner" do
+      describe "#owner" do
+        it "returns the dog's owner" do
+          dog = Dog.first
+          expected_owner = Person.find(dog.owner_id)
 
-        expect(dog.owner).to eq expected_owner
+          expect(dog.owner).to eq expected_owner
+        end
+
+        it "returns a Person object" do
+          dog = Dog.first
+          expect(dog.owner).to be_instance_of Person
+        end
       end
 
-      it "returns a Person object" do
-        dog = Dog.first
-        expect(dog.owner).to be_instance_of Person
-      end
-    end
+      describe "#owner=" do
+        it "sets owner_id" do
+          dog = Dog.new
+          new_owner = Person.first
 
-    describe "#owner=" do
-      it "sets owner_id" do
-        dog = Dog.new
-        new_owner = Person.first
-
-        expect{ dog.owner = new_owner }.to change{ dog.owner_id }.from(nil).to(new_owner.id)
+          expect{ dog.owner = new_owner }.to change{ dog.owner_id }.from(nil).to(new_owner.id)
+        end
       end
     end
   end
