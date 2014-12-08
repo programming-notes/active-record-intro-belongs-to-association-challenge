@@ -8,7 +8,7 @@
 
 We've already written the database migrations that create the tables and fields that our application needs.  Each table has a primary key field:  `id`.  Some of them have foreign key fields that point to the `id` on another table.  When we can link tables to each other through primary and foreign keys, we can say that their corresponding models are associated with each other.  We just need to define what that association looks like.
 
-In our schema for example, every record in the `ratings` table will have a `dog_id` value that points to a record in the `dogs` table—the record with the `id` that matches `dog_id`.  We're able to join records in the `ratings` table to records in the `dogs` table.  So, we can define an association that describes the relationship between the `Rating` class and the `Dog` class. 
+In our schema for example, every record in the `ratings` table will have a `dog_id` value that points to a record in the `dogs` table—the record with the `id` that matches `dog_id`.  We're able to join records in the `ratings` table to records in the `dogs` table.  So, we can define an association that describes the relationship between the `Rating` class and the `Dog` class.
 
 The question is what kind of relationship do we have?  Let's consider this from the perspective of the `Rating` class.  The `ratings` table has the foreign key; therefore, an instance of `Rating` would belong to an instance of `Dog`.
 
@@ -17,17 +17,12 @@ class Rating < ActiveRecord::Base
 
   belongs_to :dog
 
-  validates :coolness, :cuteness, :judge_id, :dog_id, { :presence => true }
-  validates :coolness, { :numericality => { :greater_than => 0, :less_than => 11 } }
-  validates :cuteness, { :numericality => { :greater_than => 0, :less_than => 11 } }
-  validates :judge_id, { :uniqueness => { :scope => :dog_id } }
-
 end
 ```
 
 *Figure 2.*  Code for `Rating` class.
 
-Figure 2 shows an updated `Rating` class that defines the association between `Rating` and `Dog`.  Note the line `belongs_to :dog`.  
+Figure 2 shows an updated `Rating` class that defines the association between `Rating` and `Dog`.  Note the line `belongs_to :dog`.
 
 This is very similar to the `attr_reader`, `attr_writer`, and `attr_accessor` methods that we've seen.  Like these methods, `belongs_to` is a method that will be called on the class we're defining—in this case `Rating`.  Also, `belongs_to` is going to provide us with instance methods to call on `Rating` objects.
 
