@@ -49,11 +49,3 @@ describe "Dog" do
     end
   end
 end
-
-
-
-tenley_details = { :name     => "Tenley",
-                   :license  => "OH-9384764",
-                   :age      => 1,
-                   :breed    => "Golden Doodle",
-                   :owner_id => 1 }
