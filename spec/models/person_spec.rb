@@ -19,7 +19,7 @@ describe Person do
           expect(@rating.dog).to eq @dog
         end
 
-        it 'returns a dog' do
+        it 'returns a dog object' do
           expect(@rating.dog).to be_an_instance_of Dog
         end
       end
@@ -38,7 +38,7 @@ describe Person do
           expect(@rating.judge).to eq @judge
         end
 
-        it 'returns a judge' do
+        it 'returns a person object' do
           expect(@rating.judge).to be_an_instance_of Judge
         end
       end

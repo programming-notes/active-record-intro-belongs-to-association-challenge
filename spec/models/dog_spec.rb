@@ -13,11 +13,11 @@ describe Dog do
       end
 
       describe '#owner' do
-        it 'returns the dog\s owner'
+        it 'returns the dog\'s owner' do
           expect(@dog.owner).to eq @owner
         end
 
-        it 'returns a person' do
+        it 'returns a person object' do
           expect(@dog.owner).to be_an_instance_of Person
         end
       end
