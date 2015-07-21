@@ -127,21 +127,29 @@ We're going to explore the methods generated when we declare a belongs to associ
 
 In Figure 7, we call `Rating.first` to get an instance of the `Rating` class.  We assign this instance of `Rating` to the variable `rating`.  We then call the `#dog` getter method provided to us by the `.belongs_to` method.  Through this method, we're able to retrieve the `Dog` object to which an instance of `Rating` belongs.  In this case, `#dog` returns the dog named Tenley.
 
-- `other_dog = Dog.find(3)`
 
-  We're assigning the variable `other_dog` to another instance of `Dog`, the one with the `id` of `3`.
+### Release 1: Setting the Dog to Which a Rating Belongs
+```ruby
+rating.dog
+# => #<Dog id: 1, name: "Tenley", ... >
 
-- `our_rating.dog = other_dog`
+jayda = Dog.find(2)
+# => #<Dog id: 2, name: "Jayda", ... >
+rating.dog = jayda
+# => #<Dog id: 2, name: "Jayda", ... >
+rating.save
+# true
+rating.dog
+# => #<Dog id: 2, name: "Jayda", ... >
+```
+*Figure 8*. Setting the dog to which a rating belongs.
 
-  We're calling the *setter* method provided by `.belongs_to` to change the instance of `Dog` to which `our_rating` belongs.
+We'll continue working with the rating object from the previous release.  In this release, we'll discuss the setter method `#dog=`.  This setter method allows us a quick way to say that a rating belongs to a particular dog.  And, Active Record will take care of setting all the foreign key values for us.
 
-- `our_rating.dog_id`
+In Figure 8, we see that our rating object belongs the the dog named Tenley, as was seen in the previous release.  Then, we're assigning a new variable, `jayda`, to an instance of the `Dog` class, the one with the id 2.  And, we call the setter method provided by `.belongs_to` to change the instance of `Dog` to which `our_rating` belongs.
 
-  We can see that Active Record has updated the value of `our_rating`'s `dog_id` attribute.  However, this change only exists in our Ruby object, not the database.
+We call `#save` to persist the change in the dog to which the rating belongs.  When we call the setter method, `#dog=`, the dog id attribute of the rating is updated in the Ruby object, but the change is not persisted in the database until we call save.
 
-- `our_rating.save`
-
-  Calling `#save` on `our_rating` will persist the change in the `Dog` object to which `our_rating` belongs.
 
 - `new_rating = Rating.new(coolness: 8, cuteness: 9, judge_id: 5)`
 
