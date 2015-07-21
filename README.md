@@ -1,50 +1,103 @@
-# Active Record Intro:  `belongs_to` Association
+# Active Record Intro:  Belongs To
 
 ## Summary
 
 ![Database Schema](schema_design_new.png)
 
-*Figure 1*.  Database schema.
+*Figure 1*.  Schema design for this challenge, showing connections between primary keys and foreign keys.
 
-We've already written the database migrations that create the tables and fields that our application needs.  Each table has a primary key field:  `id`.  Some of them have foreign key fields that point to the `id` on another table.  When we can link tables to each other through primary and foreign keys, we can say that their corresponding models are associated with each other.  We just need to define what that association looks like.
+In this challenge we're going to begin to explore the relationships between our models.  In Active Record, we call these relationships *associations*. We'll be focusing exclusively on the *belongs to* association:  one object belongs to another object.  For example, a dog belongs to an owner.  We'll discuss how to identify when a belongs to association is appropriate and the naming conventions around defining a belongs to association. 
 
-In our schema for example, every record in the `ratings` table will have a `dog_id` value that points to a record in the `dogs` table—the record with the `id` that matches `dog_id`.  We're able to join records in the `ratings` table to records in the `dogs` table.  So, we can define an association that describes the relationship between the `Rating` class and the `Dog` class.
+We know from our work with SQL that rows of data in one table can be paired with rows of data in another table (e.g., when joining tables).  We often make these connections by matching the primary key in one table with a foreign key in another table (see Figure 1).
 
-The question is what kind of relationship do we have?  Let's consider this from the perspective of the `Rating` class.  The `ratings` table has the foreign key; therefore, an instance of `Rating` would belong to an instance of `Dog`.
+If we had a dog with a known id, say 1, how could we find the name of its owner?  We have to get data from the people table, but we only have information about data in the dogs table.
 
+```sql
+SELECT people.first_name, people.last_name
+FROM dogs
+JOIN people
+ON dogs.owner_id = people.id
+WHERE dogs.id = 1;
+```
+*Figure 2*.  SQL query to retrieve the name of the owner of the dog with id 1.
+
+We could check our database for the dog with id 1 and get the owner id value—the owner id is a foreign key field.  Say the owner id is 5.  We can take that value and go find the record in the people table with id 5.  This record would contain data for the dog's owner.  Then we could get the first and last names.  In principle this is what we're doing in the query in Figure 2.
+
+When we define Active Record associations for our models, Active Record will be doing all of this SQL work for us.  But, as we'll see when we discuss Active Record conventions, it's important to know what's going on in the background.
+
+
+### Identifying a Belongs To Association
+A belongs to association is possible when we can connect the foreign key in one table to the primary key in another table.  The model with the foreign key and the model with the primary key can be associated with each other, but the type of association we need to declare depends on which key is with which model.
+
+In this challenge, we're exploring the belongs to association.  Based on our schema, we could say that ...
+
+- a dog belongs to an owner/person
+- a rating belongs to the judge/person who did the rating
+- a rating belongs to the dog that was rated
+
+With these three belongs to relationships in mind, let's look again at the schema in Figure 1.  Given the two models between which these associations are made (e.g., rating and dog), can we deduce on which table the foreign key resides?  Is the foreign key with the model that belongs to another model, or the other way around?
+
+We've said that a rating belongs to the dog that was rated.  In connecting the ratings table to the dogs table, we match a foreign key on the ratings table, dog id, with the dogs table primary key, id.  The ratings table contains the foreign key.  And this is how we identify that we would define a belongs to association for the `Rating` class.
+
+If a model's database table has a foreign key that points to another model, it belongs to the other model.
+
+
+### Declaring a Belongs To Association
 ```ruby
 class Rating < ActiveRecord::Base
-
   belongs_to :dog
-
 end
 ```
 
-*Figure 2.*  Code for `Rating` class.
+*Figure 3.*  Code for the class `Rating` with a belongs to association defined.
 
-Figure 2 shows an updated `Rating` class that defines the association between `Rating` and `Dog`.  Note the line `belongs_to :dog`.
+We've discussed how to identify where a belongs to association can be declared.  Now we'll talk about how to actually make the declaration (i.e., what is the syntax for declaring a belongs to association).
 
-This is very similar to the `attr_reader`, `attr_writer`, and `attr_accessor` methods that we've seen.  Like these methods, `belongs_to` is a method that will be called on the class we're defining—in this case `Rating`.  Also, `belongs_to` is going to provide us with instance methods to call on `Rating` objects.
+Figure 3 shows a `Rating` class that defines a belongs to association between `Rating` and `Dog`.  Note the line `belongs_to :dog`.  What is `.belongs_to`?  What is `:dog`?
 
-In particular, we will get *getter* and *setter* methods for the `Dog` object associated with any instance of `Rating`.  The method names are derived from the argument passed to the `belongs_to` method.  In this case, we passed `:dog`.  Therefore, the getter method is `#dog` and the setter method is `dog=`.
+`.belongs_to` is a method.  It is very similar to the methods `attr_reader`, `attr_writer`, and `attr_accessor` that we've been using.  Like these methods, `.belongs_to` is a method that will be called on the class we're defining—in this case `Rating`.  
 
-There are three more methods that are provided when we define that `Rating` belongs to `Dog`:  `#build_dog`, `#create_dog`, and `#create_dog!`.  We can use these methods to make the `Dog` object to which a `Rating` object belongs.
+Do we remember what the attribute methods do (e.g., `attr_reader`)?  They are a shorthand way of declaring *getter* and *setter* methods for instance variables.
+
+```ruby
+rating = Rating.first
+# => #<Rating id: 1, ... dog_id: 1, ... >
+rating.dog
+# => #<Dog id: 1, name: "Tenley", ... >
+```
+*Figure 4*.  Getting a rating's dog.
+
+In the same way, `.belongs_to` is going to provide us with methods that facilitate interacting with an object's associated object.  In this specific case, a `Rating` object will have methods for interacting with its `Dog` object (see Figure 4).
+
+In this challenge we're going to explore the methods that `.belongs_to` generates.  It's important to note that the method names are derived from the first argument passed to the `.belongs_to` method.  In this case, we passed `:dog`.  For a belongs_to association, this must be singular.
+
+What methods will we get?  We will have both getter and setter methods for the `Dog` object; use of the getter method is demonstrated in Figure 4.  The getter method is `#dog` and the setter method is `#dog=`.
+
+In addition to the getter and setter methods, there a few more methods that are provided when we declare that a rating belongs to a dog:  `#build_dog`, `#create_dog`, and `#create_dog!`.  We can use these methods to make a `Dog` object to which a rating object belongs—again we'll take a look at these in this challenge.
+
 
 ### Active Record Conventions
-
 Convention over configuration.  Active Record provides a lot of functionality with very little code.  In order to achieve this, we need to follow conventions.  For example, our table names should match our class names; otherwise, Active Record doesn't work out of the box, and we have to configure it.
 
-The same is true for defining associations between two classes.  Declaring in the `Rating` class `belongs_to :dog`, rests upon us following convention.
+The same is true for defining associations between two classes.  Declaring  that a rating belongs to a dog as seen in Figure 3 rests upon us following convention.  When we declare a belongs to association for a class, there are conventions regarding the name of the class to which the class belongs and the name of the foreign key field:
 
-When we define a belongs to association, Active Record expects to find a class with a name matching the argument passed in.  In this case, we passed `:dogs`, so Active Record expects to find a `Dog` class.  We have one, so we're all right.  Also, Active Record needs to know how to identify the `Dog` object to which a `Rating` object belongs.  In other words, it needs to know the foreign key on the `ratings` that matches `id` on the `dogs` table.  Convention indicates that the foreign key should be named `dog_id`.  Again, we're following convention, so this association just works.
+- Active Record expects to find a class with a name matching the first argument passed to `.belongs_to`.  In Figure 3, we passed `:dog`, so Active Record expects to find a `Dog` class.
 
-If one of these conventions were broken, we would have to configure the association.  In other words, we'd have to tell Active Record where to look.  We can do that with an optional hash argument that we can pass to the `belongs_to` method.  Active Record is going to assume that a specific class and a specific foreign key exits.  If they're not there we can pass that information along:
+- Active Record expect to find a foreign key field with a name matching the first argument passed to `.belongs_to`.  In Figure 3, we passed `:dog`, so Active Record expects to find a foreign key field `dog_id` on the ratings table.
 
-`belongs_to :dog, { :class_name => "Dog", :foreign_key => :dog_id }`
+In this particular case, both of these conventions are followed, so our association works.  If one or both of these conventions were broken, we would have to configure the association.  In other words, we'd have to tell Active Record which class and/or foreign key field to use.
 
-If we look back at Figure 1, we can see that the `ratings` table holds another foreign key:  `judge_id`.  We don't have a table for judges; we have a `people` table.  In our `Rating` class, if we want to say `belongs_to :judge`, we'll break convention.  Active Record will expect that a `Judge` class exists, but it does not.  So, we need to specify to which class we're referring.  Active Record will also expect to find a `judge_id` foreign key field on the `ratings` table, which it does find, so we've not broken that convention.
+```
+class Rating
+  belongs_to :dog, { :class_name => "Dog", :foreign_key => :dog_id }
+end
+```
+*Figure 5*.  Passing an options hash when declaring a belongs to association.
 
-We would find ourselves in a similar situation if we wanted to define a belongs to association between `Dog` and `Person`.  If we wanted to say in the `Dog` class `belongs_to :owner`, we would violate convention.
+We can configure an association by passing an optional hash argument to the `.belongs_to` method.  Within the options hash, we can specify key-value pairs for the class name and the foreign key field to use.  In Figure 5, we're declaring a belongs to association and passing in an options hash to configure the association—though in this case, the options hash is unnecessary because convention was not broken.
+
+If we look back at Figure 1, we can see that the ratings table holds another foreign key:  `judge_id`.  But, we don't have a judge model; we have a person model.  If we wanted to declare that a rating belongs to a judge (i.e., `belongs_to :judge`), we'd break convention.  Active Record would expect that a `Judge` class exists, but it does not.  So, we would need to specify to which class we're referring.  Active Record will also expect to find a `judge_id` foreign key field on the ratings table, which it does find, so we've not broken that convention and would not need to configure the foreign key field to use.
+
 
 ## Releases
 
@@ -58,7 +111,7 @@ We would find ourselves in a similar situation if we wanted to define a belongs 
 
 4. Use the provided Rake task to seed the database.  This will seed all three tables with data.
 
-### Release 0: Exploring `belongs_to` Association Methods
+### Release 0: Exploring `.belongs_to` Association Methods
 
 Use the provided Rake task to open the console:  `bundle exec rake console`.
 
@@ -74,7 +127,7 @@ From within the console run ...
 
 - `our_rating.dog`
 
-  We're calling the *getter* method provided to us by the `belongs_to` method.  We're able to retrieve the `Dog` object to which an instance of `Rating` belongs through this method.  In this case, this rating is for the dog Tenley.
+  We're calling the *getter* method provided to us by the `.belongs_to` method.  We're able to retrieve the `Dog` object to which an instance of `Rating` belongs through this method.  In this case, this rating is for the dog Tenley.
 
 - `other_dog = Dog.find(3)`
 
@@ -82,7 +135,7 @@ From within the console run ...
 
 - `our_rating.dog = other_dog`
 
-  We're calling the *setter* method provided by `belongs_to` to change the instance of `Dog` to which `our_rating` belongs.
+  We're calling the *setter* method provided by `.belongs_to` to change the instance of `Dog` to which `our_rating` belongs.
 
 - `our_rating.dog_id`
 
@@ -98,7 +151,7 @@ From within the console run ...
 
 - `new_rating.create_dog(name: "Toot", owner_id: 4, license: "OH-1234567")`
 
-  Here were using one of the other methods provided by the `belongs_to` method:  `#create_dog`.  It will create the dog to which `new_rating` belongs.
+  Here were using one of the other methods provided by the `.belongs_to` method:  `#create_dog`.  It will create the dog to which `new_rating` belongs.
 
 - `new_rating.dog`
 
@@ -112,7 +165,7 @@ From within the console run ...
 
 - `exit`
 
-### Release 2:  Write `belongs_to` Associations
+### Release 2:  Write `.belongs_to` Associations
 
 At the end of the *Summary* section, two other belongs to associations were described:  A rating belongs to a judge.  A dog belongs to an owner.
 
