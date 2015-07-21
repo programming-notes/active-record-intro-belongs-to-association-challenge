@@ -151,25 +151,30 @@ In Figure 8, we see that our rating object belongs the the dog named Tenley, as 
 We call `#save` to persist the change in the dog to which the rating belongs.  When we call the setter method, `#dog=`, the dog id attribute of the rating is updated in the Ruby object, but the change is not persisted in the database until we call save.
 
 
-- `new_rating = Rating.new(coolness: 8, cuteness: 9, judge_id: 5)`
+### Release 2: Making a New Dog for a Rating
+```ruby
+new_rating = Rating.new(coolness: 8, cuteness: 9, judge_id: 5)
+# => #<Rating id: nil, coolness: 8, ... dog_id: nil ... >
+new_rating.create_dog(name: "Toot", license: "OH-1234567", owner_id: 4)
+# => #<Dog id: 4, name: "Toot", ... >
+new_rating
+ => #<Rating id: nil, coolness: 8, ... dog_id: 4, ... > 
+new_rating.dog
+# => #<Dog id: 4, name: "Toot", ... >
+new_rating.save
+# => true
+```
+*Figure 9*. Making a Dog for a Rating
 
-  This creates a new instance of `Rating` that has not been save to the database; we can see that it has `nil` for its `id` attribute.  Also note that the value of its `dog_id` attribute is also `nil`.
+When we assign the dog to which a rating belongs using the setter method, we must already have a dog object.  Sometimes we find ourselves with just a rating object and the attributes for a dog, but not an actual dog object.  In such a case, we can build or create a dog for the rating.  And again, Active Record will handle the foreign key work, so that the dog we make is associated to our rating.
 
-- `new_rating.create_dog(name: "Toot", owner_id: 4, license: "OH-1234567")`
+In Figure 9 we create a new rating object.  We supply all the attributes for the object except for the dog id.  When we instantiate the object, it's dog id attribute is set to `nil`.  This rating was made for a dog, but that dog does not yet exist in our database.
 
-  Here were using one of the other methods provided by the `.belongs_to` method:  `#create_dog`.  It will create the dog to which `new_rating` belongs.
+We use one of the other methods provided by `.belongs_to`:  the `#create_dog` method.  This method allows us to create a new dog and associate it with our rating at the same time.  We can see that when we call the `.create_dog` method, it saves a new dog to the database and updates the foreign key value of `new_rating`.  And we can now access the newly created dog through our rating's getter method, `#dog`.
 
-- `new_rating.dog`
+In this case we used `.create_dog` which persists the new dog in the database before we actually save the rating.  Alternatively, we could use `.build_dog` to create the dog object in Ruby but not persist it in the database until we persist the rating.  This is another example of Active Record providing paired methods where one method tries to persist and object and the other requires saving records manually.
 
-  We can get the dog that we just created for `new_rating` through the `#dog` getter method.  Because we called `#create_dog`, a Ruby instance of `Dog` was created, and the data was saved to the database.  We can see that this new dog has an `id`.
 
-- `new_rating`
-
-  If we look at `new_rating`, we can see that its `dog_id`, which was previously `nil`, has been assigned the value of the `id` of the dog that was just created.  Active Record did this for us when we ran the `#create_dog` method.
-
--  `new_rating.save`
-
-- `exit`
 
 ### Release 2:  Write `.belongs_to` Associations
 
