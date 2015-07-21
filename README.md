@@ -89,7 +89,7 @@ The same is true for defining associations between models.  When we declare a be
 
 In this particular case, both of these conventions are followed, so our association works.  If one or both of these conventions were broken, we would have to configure the association.  In other words, we'd have to tell Active Record which class and/or foreign key field to use.
 
-```
+```ruby
 class Rating
   belongs_to :dog, { :class_name => "Dog", :foreign_key => :dog_id }
 end
@@ -134,7 +134,6 @@ In Figure 7, we call `Rating.first` to get an instance of the `Rating` class.  W
 ```ruby
 rating.dog
 # => #<Dog id: 1, name: "Tenley", ... >
-
 jayda = Dog.find(2)
 # => #<Dog id: 2, name: "Jayda", ... >
 rating.dog = jayda
@@ -178,7 +177,7 @@ We create the dog using one of the other methods provided by `.belongs_to`:  the
 
 
 ### Release 3:  Treating Dog Like an Attribute of Rating
-```
+```ruby
 tenley = Dog.find_by(name: 'Tenley')
 # => #<Dog id: 1, name: "Tenley", ... >
 new_rating = Rating.new(judge_id: 2, dog: tenley, coolness: 8, cuteness: 10)
