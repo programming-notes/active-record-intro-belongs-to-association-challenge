@@ -65,7 +65,7 @@ rating = Rating.first
 rating.dog
 # => #<Dog id: 1, name: "Tenley", ... >
 ```
-*Figure 4*.  Getting a rating's dog.
+*Figure 4*.  Getting the dog to which a rating belongs.
 
 In the same way, `.belongs_to` is going to provide us with methods that facilitate interacting with an object's associated object.  In this specific case, a `Rating` object will have methods for interacting with its `Dog` object (see Figure 4).
 
@@ -114,23 +114,18 @@ Before we begin, we need to create, migrate, and seed our database.  We'll seed 
 We're going to work with our `Rating` class from within the Rake console.  Let's begin by opening the console.  Once it's open, we can begin interacting with our models.  As we work through each release, we should execute the provided example code ourselves and look at the return values.
 
 
-### Release 0: Exploring `.belongs_to` Association Methods
+### Release 0: Getting the Dog to Which a Rating Belongs
+```ruby
+rating = Rating.first
+# => #<Rating id: 1, coolness: 6, ... >
+rating.dog
+# => #<Dog id: 1, name: "Tenley", ... >
+```
+*Figure 7*. Getting the dog to which a rating belongs.
 
-Use the provided Rake task to open the console:  `bundle exec rake console`.
+We're going to explore the methods generated when we declare a belongs to association, and we'll start with the getter method.  When we declare that a rating belongs to a dog, we're provided with a method to get the dog.  Given an instance of the `Rating` class, we can ask the rating for the dog to which it belongs.
 
-From within the console run ...
-
-- `our_rating = Rating.first`
-
-  Calling `Rating::first` will return to us the first record in the `ratings` table, as ordered by the primary key.  This instance of `Rating` is assigned to the variable `our_rating`.  Looking at the object, we see that the object has a `dog_id` value of `1`.  In other words, `our_rating` belongs to the dog with an `id` of `1`.
-
-- `our_rating.dog_id`
-
-  We can retrieve the value of `our_rating`'s `dog_id` attribute and see that it is `1`.
-
-- `our_rating.dog`
-
-  We're calling the *getter* method provided to us by the `.belongs_to` method.  We're able to retrieve the `Dog` object to which an instance of `Rating` belongs through this method.  In this case, this rating is for the dog Tenley.
+In Figure 7, we call `Rating.first` to get an instance of the `Rating` class.  We assign this instance of `Rating` to the variable `rating`.  We then call the `#dog` getter method provided to us by the `.belongs_to` method.  Through this method, we're able to retrieve the `Dog` object to which an instance of `Rating` belongs.  In this case, `#dog` returns the dog named Tenley.
 
 - `other_dog = Dog.find(3)`
 
