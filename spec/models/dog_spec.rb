@@ -8,7 +8,7 @@ describe Dog do
   describe 'associations' do
     describe 'a dog belongs to an owner' do
       before(:each) do
-        @owner = Person.create(name: 'Teagan', last_name: 'Hickman')
+        @owner = Person.create(first_name: 'Teagan', last_name: 'Hickman')
         @dog = Dog.create(name: 'Tenley', license: 'OH-9384764', age: 1, breed: 'Golden Doodle', owner_id: @owner.id)
       end
 
