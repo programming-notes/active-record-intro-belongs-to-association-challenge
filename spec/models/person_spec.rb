@@ -39,7 +39,7 @@ describe Person do
         end
 
         it 'returns a person object' do
-          expect(@rating.judge).to be_an_instance_of Judge
+          expect(@rating.judge).to be_an_instance_of Person
         end
       end
 
