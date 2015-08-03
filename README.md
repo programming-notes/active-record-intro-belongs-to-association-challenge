@@ -6,7 +6,7 @@
 
 *Figure 1*.  Schema design for this challenge, showing connections between primary keys and foreign keys.
 
-As we've been working with schemas, we've begun to identify and design relationships in our databases—relationships like *one-to-many* and *many-to-many*.  We're going to begin to talk about these relationships in terms of our models, using the language of Active Record.  In Active Record, we often refer to these relationships *associations*.
+As we've been working with schemas, we've begun to identify and design relationships in our databases—relationships like *one-to-many* and *many-to-many*.  We're going to begin to talk about these relationships in terms of our models, using the language of Active Record.  In Active Record, we often refer to these relationships as *associations*.
 
 In this challenge, we'll be focusing exclusively on the *belongs to* association; this is one side of a one-to-many.  In a belongs to association, we'd say that one object belongs to another object.  For example, a dog belongs to an owner. 
 
@@ -16,8 +16,8 @@ If we had a dog with a known id, say 1, how could we find the name of its owner?
 
 ```sql
 SELECT people.first_name, people.last_name
-FROM dogs
-JOIN people
+FROM people
+JOIN dogs
 ON dogs.owner_id = people.id
 WHERE dogs.id = 1;
 ```
@@ -57,9 +57,7 @@ We've discussed how to identify where a belongs to association can be declared. 
 
 Figure 3 shows a `Rating` class that defines a belongs to association between `Rating` and `Dog`.  Note the line `belongs_to :dog`.  What is `belongs_to`?  What is `:dog`?
 
-`.belongs_to` is a method.  It is very similar to the methods `attr_reader`, `attr_writer`, and `attr_accessor` that we've been using in our ruby classes.  Like these methods, `.belongs_to` is a method that will be called on the class we're defining—in this case `Rating`.  
-
-Do we remember what the attribute methods do (e.g., `attr_reader`)?  They are a shorthand way of declaring *getter* and *setter* methods for instance variables.
+`.belongs_to` is a method.  It is very similar to the methods `.attr_reader`, `.attr_writer`, and `.attr_accessor` that we've been using in our ruby classes.  Like these methods, `.belongs_to` is a method that will be called on the class we're defining—in this case the class `Rating`.  These types of methods are sometimes referred to as *class-level declarations* or *macros*.
 
 ```ruby
 rating = Rating.first
@@ -69,7 +67,9 @@ rating.dog
 ```
 *Figure 4*.  Getting the dog to which a rating belongs.
 
-In the same way, `.belongs_to` is going to provide us with methods that facilitate interacting with an object's associated object.  In this specific case, a `Rating` object will have methods for interacting with its `Dog` object (see Figure 4).
+Do we remember what the attribute methods do (e.g., `attr_reader`)?  They are a shorthand way of declaring *getter* and *setter* methods for instance variables.  In the same way, `.belongs_to` is going to provide us with methods that facilitate interacting with an object's associated object.  In this specific case, a `Rating` object will have methods for interacting with its `Dog` object (see Figure 4).  (For a look at how these class macros work, see [video from Pragmatic Studio](https://pragmaticstudio.com/blog/2015/4/14/ruby-macros).)
+
+  
 
 In this challenge we're going to explore the methods that `.belongs_to` generates.  It's important to note that the method names are derived from the first argument passed to the `.belongs_to` method.  In this case, we passed `:dog`.  For a belongs_to association, this must be singular.
 
