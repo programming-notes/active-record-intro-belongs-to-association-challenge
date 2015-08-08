@@ -8,7 +8,7 @@
 
 As we've been working with schemas, we've begun to identify and design relationships in our databases—relationships like *one-to-many* and *many-to-many*.  We're going to begin to talk about these relationships in terms of our models, using the language of Active Record.  In Active Record, we often refer to these relationships as *associations*.
 
-In this challenge, we'll be focusing exclusively on the *belongs to* association; this is one side of a one-to-many.  In a belongs to association, we'd say that one object belongs to another object.  For example, a dog belongs to an owner. 
+In this challenge, we'll be focusing exclusively on the *belongs to* association; this is one side of a one-to-many.  In a belongs to association, we'd say that one object belongs to another object.  For example, a dog belongs to an owner.
 
 We know from our work with SQL that rows of data in one table can be paired with rows of data in another table (e.g., when joining tables).  We often make these connections by matching the primary key in one table with a foreign key in another table (see Figure 1).
 
@@ -69,7 +69,7 @@ rating.dog
 
 Do we remember what the attribute methods do (e.g., `attr_reader`)?  They are a shorthand way of declaring *getter* and *setter* methods for instance variables.  In the same way, `.belongs_to` is going to provide us with methods that facilitate interacting with an object's associated object.  In this specific case, a `Rating` object will have methods for interacting with its `Dog` object (see Figure 4).  (For a look at how these class macros work, see [video from Pragmatic Studio](https://pragmaticstudio.com/blog/2015/4/14/ruby-macros).)
 
-  
+
 
 In this challenge we're going to explore the methods that `.belongs_to` generates.  It's important to note that the method names are derived from the first argument passed to the `.belongs_to` method.  In this case, we passed `:dog`.  For a belongs_to association, this must be singular.
 
@@ -111,7 +111,7 @@ $ bundle exec rake db:seed
 ```
 *Figure 6*.  Setting up and seeding the database.
 
-Before we begin, we need to create, migrate, and seed our database.  We'll seed our database with record for all three models:  `Dog`, `Rating`, and `Person`.  All the files necessary for this are provided:  the migrations and the seeds file.  We simply need to run the Rake tasks (see Figure 6).
+Before we begin, we need to create, migrate, and seed our database.  We'll seed our database with records for all three models:  `Dog`, `Rating`, and `Person`.  All the files necessary for this are provided:  the migrations and the seeds file.  We simply need to run the Rake tasks (see Figure 6).
 
 We're going to work with our `Rating` class from within the Rake console.  Let's begin by opening the console.  Once it's open, we can begin interacting with our models.  As we work through each release, we should execute the provided example code ourselves and look at the return values.
 
@@ -159,7 +159,7 @@ new_rating = Rating.new(coolness: 8, cuteness: 9, judge_id: 5)
 new_rating.create_dog(name: "Toot", license: "OH-1234567", owner_id: 4)
 # => #<Dog id: 4, name: "Toot", ... >
 new_rating
- => #<Rating id: nil, coolness: 8, ... dog_id: 4, ... > 
+ => #<Rating id: nil, coolness: 8, ... dog_id: 4, ... >
 new_rating.dog
 # => #<Dog id: 4, name: "Toot", ... >
 new_rating.save
@@ -208,7 +208,7 @@ Each key-value pair is used to call a setter method on the rating object.  So, i
 
 
 ### Release 4:  Declare Belongs To Associations
-In the *Summary* section, two other belongs to associations were described: 
+In the *Summary* section, two other belongs to associations were described:
 
 - a dog belongs to an owner
 - a rating belongs to the judge who did the rating
